@@ -18,11 +18,22 @@ find_package(SDL2 REQUIRED)
 
 
 #------------------------------------------------------------------------------
+# Other dependencies
+#------------------------------------------------------------------------------
+
+find_package(OpenGL REQUIRED)
+
+
+#------------------------------------------------------------------------------
 # Main files
 #------------------------------------------------------------------------------
 
-set(SRC_FILES
-    src/main.cpp
+set(SRCS
+        src/main.cpp
+)
+
+set(HEADERS
+        src/glErrors.hpp
 )
 
 
@@ -30,7 +41,8 @@ set(SRC_FILES
 # Executable
 #------------------------------------------------------------------------------
 
-add_executable(main ${SRC_FILES})
+add_executable(main ${SRCS} ${HEADERS})
 target_link_libraries(main
         SDL2::SDL2main
-        SDL2::SDL2)
+        SDL2::SDL2
+        ${OPENGL_LIBRARIES})
