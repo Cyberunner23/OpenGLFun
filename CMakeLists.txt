@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.8.2)
 
 
 #------------------------------------------------------------------------------
@@ -14,7 +14,10 @@ HunterGate(
 project(OpenGLFun)
 
 hunter_add_package(SDL2)
-find_package(SDL2 REQUIRED)
+find_package(SDL2 CONFIG REQUIRED)
+
+hunter_add_package(glew)
+find_package(glew CONFIG REQUIRED)
 
 
 #------------------------------------------------------------------------------
@@ -41,8 +44,10 @@ set(HEADERS
 # Executable
 #------------------------------------------------------------------------------
 
-add_executable(main ${SRCS} ${HEADERS})
-target_link_libraries(main
+add_executable(${PROJECT_NAME} ${SRCS} ${HEADERS})
+target_link_libraries(${PROJECT_NAME}
         SDL2::SDL2main
         SDL2::SDL2
-        ${OPENGL_LIBRARIES})
+        OpenGL::GL
+        glew::glew
+)
