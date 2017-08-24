@@ -13,11 +13,11 @@ HunterGate(
 
 project(OpenGLFun)
 
-hunter_add_package(SDL2)
-find_package(SDL2 CONFIG REQUIRED)
-
 hunter_add_package(glew)
 find_package(glew CONFIG REQUIRED)
+
+hunter_add_package(glfw)
+find_package(glfw3 CONFIG REQUIRED)
 
 
 #------------------------------------------------------------------------------
@@ -46,8 +46,7 @@ set(HEADERS
 
 add_executable(${PROJECT_NAME} ${SRCS} ${HEADERS})
 target_link_libraries(${PROJECT_NAME}
-        SDL2::SDL2main
-        SDL2::SDL2
-        OpenGL::GL
         glew::glew
+        glfw
+        OpenGL::GL
 )
