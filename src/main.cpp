@@ -12,11 +12,13 @@
 #include "GLFW/glfw3.h"
 
 #include "glErrors.hpp"
+#include "glShaderUtil.hpp"
 
 
-GLFWwindow*   window = nullptr;
+GLFWwindow* window;
 
 int main(int argc, char **argv){
+    
     
     //SDL Init
     if (!glfwInit()){
@@ -58,39 +60,10 @@ int main(int argc, char **argv){
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
     
-    const GLchar* vShaderSrc[] = { "#version 330 core\nlayout(location = 0) in vec3 vertexPos;\nvoid main() { gl_Position.xyz = vertexPos; gl_Position.w = 1.0; }" };
-    const GLchar* fShaderSrc[] = { "#version 330 core\nout vec3 frag; void main() { frag = vec3( 1, 0, 0 ); }" };
-    
-    GLuint programID       = glCreateProgram();
-    GLuint vShader         = glCreateShader(GL_VERTEX_SHADER);
-    GLuint fShader         = glCreateShader(GL_FRAGMENT_SHADER);
-    GLint  vShaderCompiled = GL_FALSE;
-    GLint  fShaderCompiled = GL_FALSE;
-    
-    glShaderSource(vShader, 1, vShaderSrc, NULL);
-    glShaderSource(fShader, 1, fShaderSrc, NULL);
-    
-    glCompileShader(vShader);
-    glGetShaderiv(vShader, GL_COMPILE_STATUS, &vShaderCompiled);
-    glAttachShader(programID, vShader);
-   
-    glCompileShader(fShader);
-    glGetShaderiv(fShader, GL_COMPILE_STATUS, &fShaderCompiled);
-    glAttachShader(programID, fShader);
-    
-    if (vShaderCompiled != GL_TRUE || fShaderCompiled != GL_TRUE) {
-        //I'll check what the error is when something messes up.
-        std::cout << "Failed to compile a shader" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
-    
-    glLinkProgram(programID);
-    
-    GLint linkSuccess = GL_TRUE;
-    glGetProgramiv(programID, GL_LINK_STATUS, &linkSuccess);
-    if (linkSuccess != GL_TRUE) {
-        std::cout << "Failed to link shader program" << std::endl;
+    GLuint programID;
+    std::string shaderErr = setupGenericShaders(programID, "shaders/generic.vert", "shaders/generic.frag");
+    if (shaderErr.empty()) {
+        std::cout << shaderErr << std::endl;
         glfwTerminate();
         return -1;
     }
@@ -104,7 +77,6 @@ int main(int argc, char **argv){
     };
     
     GLuint VBO;
-    
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices,  GL_STATIC_DRAW);
@@ -123,7 +95,7 @@ int main(int argc, char **argv){
         glDrawArrays(GL_TRIANGLES, 0, 3);
         
         glDisableVertexAttribArray(0);
-        glUseProgram(NULL);
+        glUseProgram((GLuint)NULL);
     
         glfwSwapBuffers(window);
         glfwPollEvents();

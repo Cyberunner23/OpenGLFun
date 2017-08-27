@@ -11,7 +11,11 @@ HunterGate(
         SHA1 "3ed5ea39abf52afab06c77e1b7d7e41e939752f1"
 )
 
+
 project(OpenGLFun)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+
 
 hunter_add_package(glew)
 find_package(glew CONFIG REQUIRED)
@@ -33,11 +37,23 @@ find_package(OpenGL REQUIRED)
 
 set(SRCS
         src/main.cpp
+        src/glShaderUtil.cpp
 )
 
 set(HEADERS
         src/glErrors.hpp
+        src/glShaderUtil.hpp
 )
+
+
+#------------------------------------------------------------------------------
+# Assets
+#------------------------------------------------------------------------------
+
+#Copy over the shaders
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/shaders)
+configure_file(shaders/generic.vert shaders/generic.vert COPYONLY)
+configure_file(shaders/generic.frag shaders/generic.frag COPYONLY)
 
 
 #------------------------------------------------------------------------------
