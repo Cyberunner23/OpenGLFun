@@ -40,18 +40,18 @@ std::string setupGenericShaders(GLuint &programID, const char* vertFileName, con
     programID = glCreateProgram();
     
     shaderErr = loadShader<GL_VERTEX_SHADER>(vShaderID, vertFileName);
-    if (shaderErr.empty())
-        return "Failed to compile vertex shader" + shaderErr;
+    if (shaderErr != "")
+        return "Failed to compile vertex shader: " + shaderErr;
     
     shaderErr = loadShader<GL_FRAGMENT_SHADER>(fShaderID, fragFileName);
-    if (shaderErr.empty())
-        return "Failed to compile fragment shader" + shaderErr;
+    if (shaderErr != "")
+        return "Failed to compile fragment shader: " + shaderErr;
     
     glAttachShader(programID, vShaderID);
     glAttachShader(programID, fShaderID);
     
     shaderErr = linkShaders(programID);
-    if (shaderErr.empty())
+    if (shaderErr != "")
         return "Failed to link shader program: " + shaderErr;
     
     glDetachShader(programID, vShaderID);

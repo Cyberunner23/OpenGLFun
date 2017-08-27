@@ -60,9 +60,9 @@ int main(int argc, char **argv){
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
     
-    GLuint programID;
+    GLuint      programID;
     std::string shaderErr = setupGenericShaders(programID, "shaders/generic.vert", "shaders/generic.frag");
-    if (shaderErr.empty()) {
+    if (shaderErr != "") {
         std::cout << shaderErr << std::endl;
         glfwTerminate();
         return -1;
