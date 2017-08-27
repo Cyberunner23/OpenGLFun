@@ -23,6 +23,9 @@ find_package(glew CONFIG REQUIRED)
 hunter_add_package(glfw)
 find_package(glfw3 CONFIG REQUIRED)
 
+hunter_add_package(glm)
+find_package(glm CONFIG REQUIRED)
+
 
 #------------------------------------------------------------------------------
 # Other dependencies
@@ -63,5 +66,6 @@ add_executable(${PROJECT_NAME} ${SRCS} ${HEADERS})
 target_link_libraries(${PROJECT_NAME}
         glew::glew
         glfw
+        glm
         OpenGL::GL
 )

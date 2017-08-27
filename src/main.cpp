@@ -10,11 +10,16 @@
 
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 #include "glShaderUtil.hpp"
 
 
 GLFWwindow* window;
+static const unsigned int screenWidth  = 1024;
+static const unsigned int screenHeight = 768;
 
 int main(int argc, char **argv){
     
@@ -32,7 +37,7 @@ int main(int argc, char **argv){
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     
-    window = glfwCreateWindow(1024, 768, "OpenGLFun", NULL, NULL);
+    window = glfwCreateWindow(screenWidth, screenHeight, "OpenGLFun", NULL, NULL);
     if (window == nullptr) {
         std::cout << "Failed to create a window." << std::endl;
         glfwTerminate();
@@ -81,6 +86,15 @@ int main(int argc, char **argv){
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices,  GL_STATIC_DRAW);
     
     //Main loop
+    glm::mat4 model;
+    glm::mat4 view;
+    glm::mat4 projection;
+    glm::mat4 MVP;
+    model      = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    view       = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+    projection = glm::perspective(glm::radians(45.0f), (float)screenWidth / screenHeight, 1.0f, 100.0f);
+    MVP        = projection * view * model;
+    
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
     do {
     
@@ -89,6 +103,9 @@ int main(int argc, char **argv){
         
         glUseProgram(programID);
         glEnableVertexAttribArray(0);
+        
+        GLint MVPLocation = glGetUniformLocation(programID, "MVP");
+        glUniformMatrix4fv(MVPLocation, 1, GL_FALSE, glm::value_ptr(MVP));
         
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
