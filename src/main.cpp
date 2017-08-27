@@ -20,7 +20,7 @@ GLFWwindow* window;
 int main(int argc, char **argv){
     
     
-    //SDL Init
+    //GLFW Init
     if (!glfwInit()){
         std::cout << "Failed to initialize GLFW." << std::endl;
         return -1;
@@ -86,6 +86,7 @@ int main(int argc, char **argv){
     do {
     
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         
         glUseProgram(programID);
         glEnableVertexAttribArray(0);
