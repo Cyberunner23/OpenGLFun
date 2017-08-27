@@ -41,7 +41,6 @@ set(SRCS
 )
 
 set(HEADERS
-        src/glErrors.hpp
         src/glShaderUtil.hpp
 )
 
