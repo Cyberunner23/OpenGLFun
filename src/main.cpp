@@ -14,6 +14,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
+#include "glCamera.hpp"
 #include "glShaderUtil.hpp"
 
 
@@ -87,13 +88,15 @@ int main(int argc, char **argv){
     
     //Main loop
     glm::mat4 model;
-    glm::mat4 view;
     glm::mat4 projection;
     glm::mat4 MVP;
+    glCamera camera;
+    
+    camera.zVirtPos = 3.0f;
+    
     model      = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    view       = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
     projection = glm::perspective(glm::radians(45.0f), (float)screenWidth / screenHeight, 1.0f, 100.0f);
-    MVP        = projection * view * model;
+    MVP        = projection * camera.computeViewMat() * model;
     
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
     do {

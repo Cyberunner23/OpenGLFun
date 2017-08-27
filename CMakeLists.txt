@@ -44,6 +44,7 @@ set(SRCS
 )
 
 set(HEADERS
+        src/glCamera.hpp
         src/glShaderUtil.hpp
 )
 
