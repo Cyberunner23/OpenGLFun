@@ -11,7 +11,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 struct glCamera {
-
+    
     float xVirtPos = 0.0f;
     float yVirtPos = 0.0f;
     float zVirtPos = 0.0f;
@@ -24,7 +24,7 @@ struct glCamera {
         
         glm::mat4 view;
         
-        view = glm::translate(view, glm::vec3(-xVirtPos, -yVirtPos, -zVirtPos));
+        view = glm::translate(view, glm::vec3(-xVirtPos, -yVirtPos, zVirtPos));
         view = glm::rotate(view, glm::radians(xRotation), glm::vec3(1.0f, 0.0f, 0.0f));
         view = glm::rotate(view, glm::radians(yRotation), glm::vec3(0.0f, 1.0f, 0.0f));
         view = glm::rotate(view, glm::radians(zRotation), glm::vec3(0.0f, 0.0f, 1.0f));

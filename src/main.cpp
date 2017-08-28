@@ -18,14 +18,43 @@
 #include "glShaderUtil.hpp"
 
 
-GLFWwindow* window;
+GLFWwindow*  window;
 unsigned int screenWidth  = 1024;
 unsigned int screenHeight = 768;
 
+glCamera  camera;
+glm::mat4 model;
+glm::mat4 view;
+glm::mat4 projection;
+glm::mat4 MVP;
+
+const float camSpeedFactor   = 0.05;
+const float mouseSensitivity = 1.0;
+
 void windowSizeCallback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
-    screenWidth  = width;
-    screenHeight = height;
+    screenWidth  = (unsigned int)width;
+    screenHeight = (unsigned int)height;
+    projection = glm::perspective(glm::radians(45.0f), (float)screenWidth / screenHeight, 1.0f, 100.0f);
+}
+
+void handleKeyboardInput(GLFWwindow* window, int key, int scancode, int action, int mods) {
+
+    if (key == GLFW_KEY_W && (action == GLFW_PRESS || action == GLFW_REPEAT))  {
+        camera.zVirtPos += camSpeedFactor;
+    } else if (key == GLFW_KEY_S && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        camera.zVirtPos -= camSpeedFactor;
+    } else if (key == GLFW_KEY_D && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        camera.xVirtPos += camSpeedFactor;
+    } else if (key == GLFW_KEY_A && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        camera.xVirtPos -= camSpeedFactor;
+    } else if (key == GLFW_KEY_SPACE && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        camera.yVirtPos += camSpeedFactor;
+    } else if (key == GLFW_KEY_LEFT_SHIFT && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        camera.yVirtPos -= camSpeedFactor;
+    }
+
+    view = camera.computeViewMat();
 }
 
 int main(int argc, char **argv){
@@ -51,6 +80,7 @@ int main(int argc, char **argv){
         return -1;
     }
     
+    glfwSetKeyCallback(window, handleKeyboardInput);
     glfwSetWindowSizeCallback(window, windowSizeCallback);
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
@@ -94,21 +124,18 @@ int main(int argc, char **argv){
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices,  GL_STATIC_DRAW);
     
     //Main loop
-    glm::mat4 model;
-    glm::mat4 projection;
-    glm::mat4 MVP;
-    glCamera camera;
+    camera.zVirtPos = -3.0f;
     
-    camera.zVirtPos = 3.0f;
+    model      = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    view       = camera.computeViewMat();
+    projection = glm::perspective(glm::radians(45.0f), (float)screenWidth / screenHeight, 1.0f, 100.0f);
     
-    model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    
-    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_FALSE);
     do {
         
-        projection = glm::perspective(glm::radians(45.0f), (float)screenWidth / screenHeight, 1.0f, 100.0f);
-        MVP        = projection * camera.computeViewMat() * model;
-    
+        MVP   = projection * view * model;
+        model = glm::rotate(model, glm::radians(1.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         

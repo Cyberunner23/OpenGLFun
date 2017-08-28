@@ -1,7 +1,8 @@
 #version 330 core
 
+in  vec3 color;
 out vec3 frag;
 
 void main() {
-    frag = vec3(1, 0, 0);
+    frag = normalize(color);
 }
