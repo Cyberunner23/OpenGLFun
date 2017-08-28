@@ -12,25 +12,24 @@
 
 struct glCamera {
     
-    float xVirtPos = 0.0f;
-    float yVirtPos = 0.0f;
-    float zVirtPos = 0.0f;
+    glm::vec3 camPos;
+    glm::vec3 camRot;
     
-    float xRotation = 0;
-    float yRotation = 0;
-    float zRotation = 0;
+    glCamera() : camPos(0.0f, 0.0f, 0.0f),
+                 camRot(0.0f, 0.0f, 0.0f) {}
     
     glm::mat4 computeViewMat() {
         
-        glm::mat4 view;
+        glm::mat4 rotX = glm::rotate(glm::mat4(1.0f), glm::radians(camRot.x), glm::vec3(1.0f, 0.0f, 0.0f));
+        glm::mat4 rotY = glm::rotate(glm::mat4(1.0f), glm::radians(camRot.y), glm::vec3(0.0f, 1.0f, 0.0f));
+        glm::mat4 rotZ = glm::rotate(glm::mat4(1.0f), glm::radians(camRot.z), glm::vec3(0.0f, 0.0f, 1.0f));
         
-        view = glm::translate(view, glm::vec3(-xVirtPos, -yVirtPos, zVirtPos));
-        view = glm::rotate(view, glm::radians(xRotation), glm::vec3(1.0f, 0.0f, 0.0f));
-        view = glm::rotate(view, glm::radians(yRotation), glm::vec3(0.0f, 1.0f, 0.0f));
-        view = glm::rotate(view, glm::radians(zRotation), glm::vec3(0.0f, 0.0f, 1.0f));
+        glm::mat4 rotate = rotZ * rotX * rotY;
     
-        return view;
-        
+        glm::mat4 translate = glm::mat4(1.0f);
+        translate = glm::translate(translate, -camPos);
+    
+        return rotate * translate;
     }
 
 };

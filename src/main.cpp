@@ -28,8 +28,10 @@ glm::mat4 view;
 glm::mat4 projection;
 glm::mat4 MVP;
 
-const float camSpeedFactor   = 0.05;
-const float mouseSensitivity = 1.0;
+const float  camSpeedFactor   = 0.05;
+const float  mouseSensitivity = 1.0;
+      double mxPos;
+      double myPos;
 
 void windowSizeCallback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
@@ -41,19 +43,37 @@ void windowSizeCallback(GLFWwindow *window, int width, int height) {
 void handleKeyboardInput(GLFWwindow* window, int key, int scancode, int action, int mods) {
 
     if (key == GLFW_KEY_W && (action == GLFW_PRESS || action == GLFW_REPEAT))  {
-        camera.zVirtPos += camSpeedFactor;
+        camera.camPos.z += camSpeedFactor;
     } else if (key == GLFW_KEY_S && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
-        camera.zVirtPos -= camSpeedFactor;
+        camera.camPos.z -= camSpeedFactor;
     } else if (key == GLFW_KEY_D && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
-        camera.xVirtPos += camSpeedFactor;
+        camera.camPos.x -= camSpeedFactor;
     } else if (key == GLFW_KEY_A && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
-        camera.xVirtPos -= camSpeedFactor;
+        camera.camPos.x += camSpeedFactor;
     } else if (key == GLFW_KEY_SPACE && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
-        camera.yVirtPos += camSpeedFactor;
+        camera.camPos.y += camSpeedFactor;
     } else if (key == GLFW_KEY_LEFT_SHIFT && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
-        camera.yVirtPos -= camSpeedFactor;
+        camera.camPos.y -= camSpeedFactor;
     }
 
+    view = camera.computeViewMat();
+}
+
+void handleMouseInput(GLFWwindow* window, double xpos, double ypos) {
+    
+    camera.camRot.x += mouseSensitivity * (ypos - myPos);
+    camera.camRot.y += mouseSensitivity * (xpos - mxPos);
+    
+    if (camera.camRot.x > 90.0) {
+        camera.camRot.x = 90.0;
+    }
+    if (camera.camRot.x < -90.0) {
+        camera.camRot.x = -90.0;
+    }
+    
+    mxPos = xpos;
+    myPos = ypos;
+    std::cout << mxPos << ":" << myPos << " " << camera.camRot.x << ":" << camera.camRot.y << std::endl;
     view = camera.computeViewMat();
 }
 
@@ -82,8 +102,11 @@ int main(int argc, char **argv){
     
     glfwSetKeyCallback(window, handleKeyboardInput);
     glfwSetWindowSizeCallback(window, windowSizeCallback);
+    glfwGetCursorPos(window, &mxPos, &myPos);
+    glfwSetCursorPosCallback(window, handleMouseInput);
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     
     
     //Init GLEW
@@ -124,7 +147,7 @@ int main(int argc, char **argv){
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices,  GL_STATIC_DRAW);
     
     //Main loop
-    camera.zVirtPos = -3.0f;
+    camera.camPos.z = -3.0f;
     
     model      = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     view       = camera.computeViewMat();
@@ -133,8 +156,8 @@ int main(int argc, char **argv){
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_FALSE);
     do {
         
+        //model = glm::rotate(model, glm::radians(1.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         MVP   = projection * view * model;
-        model = glm::rotate(model, glm::radians(1.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
