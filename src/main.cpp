@@ -19,8 +19,14 @@
 
 
 GLFWwindow* window;
-static const unsigned int screenWidth  = 1024;
-static const unsigned int screenHeight = 768;
+unsigned int screenWidth  = 1024;
+unsigned int screenHeight = 768;
+
+void windowSizeCallback(GLFWwindow *window, int width, int height) {
+    glViewport(0, 0, width, height);
+    screenWidth  = width;
+    screenHeight = height;
+}
 
 int main(int argc, char **argv){
     
@@ -45,6 +51,7 @@ int main(int argc, char **argv){
         return -1;
     }
     
+    glfwSetWindowSizeCallback(window, windowSizeCallback);
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
     
@@ -94,12 +101,13 @@ int main(int argc, char **argv){
     
     camera.zVirtPos = 3.0f;
     
-    model      = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    projection = glm::perspective(glm::radians(45.0f), (float)screenWidth / screenHeight, 1.0f, 100.0f);
-    MVP        = projection * camera.computeViewMat() * model;
+    model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
     do {
+        
+        projection = glm::perspective(glm::radians(45.0f), (float)screenWidth / screenHeight, 1.0f, 100.0f);
+        MVP        = projection * camera.computeViewMat() * model;
     
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
